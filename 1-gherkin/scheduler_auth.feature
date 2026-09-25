@@ -2,10 +2,10 @@
 # Reto QA GoodRabbit - Punto 3.a: Diseño de casos de prueba (Gherkin)
 # Flujo elegido: Autenticación + Asignación de turnos (Scheduler)
 #
-# NOTA DE SUPUESTOS:
-# Los escenarios se diseñaron a partir del PDF del reto y de la colección Postman
-# (ejemplos de request/response). Los códigos HTTP de error marcados con "SUPUESTO"
-# siguen la convención REST y deben validarse contra el ambiente QA.
+# Actualizado el 25 de septiembre de 2026 tras ejecutar los 5 escenarios contra el
+# ambiente real (https://demo.timekeeper.goodrabbit.tech). Los codigos de respuesta
+# y comportamientos ya no son supuestos: fueron confirmados via Postman.
+# Ver evidencia y detalle en README.md y 3-bug-report/.
 
 @scheduler @auth
 Característica: Autenticación y asignación de turnos en el Scheduler
@@ -14,11 +14,13 @@ Característica: Autenticación y asignación de turnos en el Scheduler
   Para planificar la jornada laboral del equipo
 
   Antecedentes:
-    Dado que el API Gateway está disponible en "https://tk-gr.demo.goodrabbit.tech"
-    Y existe el empleado con id 8
+    Dado que el API Gateway está disponible en "https://demo.timekeeper.goodrabbit.tech"
+    Y existe el empleado con id 1
 
   # ---------------------------------------------------------------
   # ESCENARIO 1: Camino feliz
+  # CONFIRMADO: 200 OK. El backend usa employee_ids como fuente de verdad;
+  # shift.employee_id se ignora sin error (ver README, seccion 6).
   # ---------------------------------------------------------------
   @happy_path
   Escenario: Administrador asigna turnos repetidos a un empleado
@@ -26,8 +28,8 @@ Característica: Autenticación y asignación de turnos en el Scheduler
     Y obtuve un access token
     Cuando envío POST a "/v1/schedule/shift/assign" con los siguientes datos:
       | campo        | valor      |
-      | employee_ids | [8]        |
-      | date         | 2026-09-01 |
+      | employee_ids | [1]        |
+      | date         | 2026-09-10 |
       | start_ts     | 13:00:00   |
       | end_ts       | 22:00:00   |
       | duration     | 09:00:00   |
@@ -35,50 +37,63 @@ Característica: Autenticación y asignación de turnos en el Scheduler
       | repeat       | 2          |
     Entonces la respuesta tiene código 200
     Y el campo "status" es "success"
-    Y "data.success" contiene 2 turnos del empleado 8 con fechas "2026-09-01" y "2026-09-02"
-    Y "data.errors" está vacío
-    Y al consultar GET "/v1/schedule/shift/schedule" con employee_id__in=8 aparecen ambos turnos con sus segmentos
+    Y "data.total_success" es 2 y "data.total_errors" es 0
+    Y "data.success" contiene 2 turnos del empleado 1 con fechas "2026-09-10" y "2026-09-11"
+    Y al consultar GET "/v1/schedule/shift/schedule" con employee_id__in=1 aparecen ambos turnos
+    # Hallazgo adicional confirmado: la respuesta incluye "data.warnings" con
+    # rule_code "NO_RULESET_ASSIGNED" cuando el empleado no tiene una regla de
+    # horas extra/descansos asignada. El turno se crea igual (no bloquea).
 
   # ---------------------------------------------------------------
   # ESCENARIO 2: Credenciales inválidas
+  # CONFIRMADO: 400 Bad Request. Latencia medida: 18.61s (ver BUG-002).
   # ---------------------------------------------------------------
-  @seguridad @negativo
+  @seguridad
   Escenario: Login rechazado con contraseña incorrecta
     Dado que no tengo sesión iniciada
     Cuando envío POST a "/v1/login" con un usuario válido y una contraseña incorrecta
-    # SUPUESTO: el API responde 400 o 401 ante credenciales inválidas
-    Entonces la respuesta tiene código 400 o 401
+    Entonces la respuesta tiene código 400
     Y la respuesta no contiene el campo "access_token"
+    # Hallazgo: la respuesta tarda ~18.6s, incluso mas que un login exitoso (~12s).
+    # Ver BUG-002.md.
 
   # ---------------------------------------------------------------
   # ESCENARIO 3: Falta de permisos / sin token
+  # CONFIRMADO: 401 Unauthorized, 221ms (tiempo normal, sin hallazgos de performance).
   # ---------------------------------------------------------------
-  @seguridad @negativo
+  @seguridad
   Escenario: Asignar turno sin token de autorización
     Dado que no envío el header "Authorization"
     Cuando envío POST a "/v1/schedule/shift/assign" con un body válido
-    # SUPUESTO: el API responde 401 ante ausencia de token
     Entonces la respuesta tiene código 401
-    Y no se crea ningún turno para el empleado 8
+    Y la respuesta indica "Authentication token missing"
+    Y no se crea ningún turno para el empleado 1
 
   # ---------------------------------------------------------------
   # ESCENARIO 4: Datos inválidos (empleado inexistente)
+  # CONFIRMADO: 400, con data.total_errors > 0. Ver BUG-003: el mensaje de
+  # error expone la URL interna del microservicio de Empleados en el cluster.
   # ---------------------------------------------------------------
-  @datos_invalidos @negativo
+  @datos_invalidos
   Escenario: Asignar turno a un empleado inexistente
     Dado que estoy autenticado como administrador
     Cuando envío POST a "/v1/schedule/shift/assign" con employee_ids [999999]
-    # SUPUESTO: el API responde 400, 404 o 422, o informa el error dentro de "data.errors"
-    Entonces no se crea ningún turno
-    Y la respuesta indica que el empleado no existe
+    Entonces la respuesta tiene código 400
+    Y "data.total_success" es 0 y "data.total_errors" es mayor a 0
+    Y no se crea ningún turno
+    # BUG-003: el mensaje de error en data.errors["999999"] expone una URL
+    # interna del cluster (http://employees.demo.svc.cluster.local:8080/...),
+    # con codigo 403 Forbidden en vez de 404 Not Found. Ver 3-bug-report/BUG-003.md.
 
   # ---------------------------------------------------------------
   # ESCENARIO 5: Caso borde (rango horario inconsistente)
+  # CONFIRMADO: 400, con un mensaje de validacion claro y especifico
+  # (comportamiento ejemplar, sin hallazgos negativos).
   # ---------------------------------------------------------------
-  @borde @negativo
+  @borde
   Escenario: Asignar turno con hora de término anterior a la de inicio
     Dado que estoy autenticado como administrador
     Cuando envío POST a "/v1/schedule/shift/assign" con start_ts "22:00:00" y end_ts "13:00:00"
-    # SUPUESTO: el API rechaza la solicitud con un error de validación (400 o 422)
-    Entonces el sistema rechaza la solicitud con un error de validación
+    Entonces la respuesta tiene código 400
+    Y el mensaje de error es "start_ts must be less than or equal to end_ts"
     Y no se crea ningún turno

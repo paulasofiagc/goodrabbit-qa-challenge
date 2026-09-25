@@ -1,0 +1,1021 @@
+{
+  "info": {
+    "_postman_id": "25975a39-165b-492c-b95a-6c44879e1414",
+    "name": "Timekeeper Project (QA)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "28241933"
+  },
+  "item": [
+    {
+      "name": "Dashboard",
+      "item": [
+        {
+          "name": "Employee",
+          "item": [
+            {
+              "name": "[GET] /v1/employee/employee",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Employee list: status 200\", () => pm.response.to.have.status(200));\r\npm.test(\"Employee list: tiempo < 1000 ms\", () => pm.expect(pm.response.responseTime).to.be.below(1000));\r\npm.test(\"Employee list: responde JSON\", () => {\r\n  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r\n});pm.test(\"Employee list: el cuerpo es un objeto o arreglo\", () => {\r\n  pm.expect(pm.response.json()).to.satisfy(b => typeof b === \"object\" && b !== null);\r\n});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/v1/employee/employee",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "employee",
+                    "employee"
+                  ]
+                },
+                "description": "Obtiene la lista de empleados"
+              },
+              "response": [
+                {
+                  "name": "[GET] /v1/employee/employee",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{base_url}}/v1/employee/employee",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "employee",
+                        "employee"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "content-type",
+                      "value": "application/json"
+                    },
+                    {
+                      "key": "etag",
+                      "value": "7b4c4515226629b4982a8983ac24db5b"
+                    },
+                    {
+                      "key": "cache-control",
+                      "value": "private, must-revalidate"
+                    },
+                    {
+                      "key": "vary",
+                      "value": "Accept-Encoding, Accept-Encoding"
+                    },
+                    {
+                      "key": "content-encoding",
+                      "value": "gzip"
+                    },
+                    {
+                      "key": "server",
+                      "value": "istio-envoy"
+                    },
+                    {
+                      "key": "date",
+                      "value": "Fri, 25 Sep 2026 00:10:22 GMT"
+                    },
+                    {
+                      "key": "x-envoy-upstream-service-time",
+                      "value": "161"
+                    },
+                    {
+                      "key": "via",
+                      "value": "1.1 google"
+                    },
+                    {
+                      "key": "alt-svc",
+                      "value": "h3=\":443\"; ma=2592000"
+                    },
+                    {
+                      "key": "transfer-encoding",
+                      "value": "chunked"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"status\": \"success\",\n  \"message\": null,\n  \"data\": [\n    {\n      \"document_type_id\": 2,\n      \"pay_rule_id\": 1,\n      \"employee_id\": 1,\n      \"first_name\": \"Prueba\",\n      \"last_name\": \"260922\",\n      \"birth_date\": \"2020-08-22\",\n      \"email\": \"260922@gr.com\",\n      \"phone_number\": \"998899\",\n      \"address\": \"Su casa\",\n      \"document_employee\": \"260922\",\n      \"pay_period_end\": \"2026-08-21\",\n      \"timezone\": \"America/Santiago\",\n      \"active\": true,\n      \"contract_end_date\": \"3000-01-01T00:00:00\",\n      \"orgpath\": [],\n      \"tags\": [\n        {\n          \"tag_id\": 1,\n          \"start_date\": \"1990-01-01T00:00:00\",\n          \"end_date\": \"2999-12-30T00:00:00\"\n        }\n      ],\n      \"pay_rules\": [\n        {\n          \"employee_r_pay_rule_id\": 1,\n          \"employee_id\": 1,\n          \"pay_rule_id\": 1,\n          \"start_date\": \"2026-09-22\",\n          \"end_date\": \"3000-01-01\",\n          \"created_at\": \"2026-09-22T20:37:49.032373\",\n          \"updated_at\": \"2026-09-22T20:37:49.032403\"\n        }\n      ],\n      \"created_at\": \"2026-09-22T20:37:48.984831\",\n      \"updated_at\": \"2026-09-22T20:37:48.984839\"\n    }\n  ]\n}"
+                }
+              ]
+            },
+            {
+              "name": "[POST] /v1/employee/employee/create",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Employee create: status 200 o 201\", () => pm.expect(pm.response.code).to.be.oneOf([200, 201]));\r\npm.test(\"Employee create: tiempo < 1500 ms\", () => pm.expect(pm.response.responseTime).to.be.below(1500));"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"first_name\": \"Test\",\n  \"last_name\": \"QA\",\n  \"email\": \"ejemplo.qa110@goodrabbit.tech\",\n  \"document_type_id\": 1,\n  \"document_employee\": \"22222225-2\",\n  \"birth_date\": \"1990-01-01\",\n  \"pay_rule_id\": 1,\n  \"timezone\": \"America/Santiago\",\n  \"phone_number\": \"123456789\",\n  \"address\": \"Calle Falsa 1234\",\n  \"pay_period_end\": \"2026-09-23\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/v1/employee/employee/create",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "employee",
+                    "employee",
+                    "create"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Auth",
+          "item": [
+            {
+              "name": "[POST] /v1/login",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Login: status 200\", () => pm.response.to.have.status(200));\r\npm.test(\"Login: tiempo de respuesta < 1500 ms\", () => pm.expect(pm.response.responseTime).to.be.below(1500));\r\npm.test(\"Login: responde JSON\", () => {\r\n  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r\n});\r\n\r\nconst json = pm.response.json();\r\npm.test(\"Login: devuelve access_token\", () => pm.expect(json.access_token).to.be.a(\"string\").and.not.empty);\r\npm.test(\"Login: token_type es bearer\", () => pm.expect(json.token_type).to.eql(\"bearer\"));\r\npm.test(\"Login: incluye expires_in\", () => pm.expect(json.expires_in).to.be.a(\"number\"));\r\n\r\npm.collectionVariables.set(\"bearer_token\", json.access_token);\r\npm.collectionVariables.set(\"refresh_token\", json.refresh_token);\r\npm.collectionVariables.set(\"token_expires_at\", Date.now() + json.expires_in * 1000 - 30000);"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "username",
+                      "value": "{{username}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{password}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "grant_type",
+                      "value": "password",
+                      "type": "text"
+                    },
+                    {
+                      "key": "client_id",
+                      "value": "67d6c2ddad5a48b8ac66a34e4b3fff00",
+                      "type": "text"
+                    },
+                    {
+                      "key": "scope",
+                      "value": "timekeeper schedule employee auth mdm_psc custom_reports\n",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/v1/login",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "[NEG-02] Login con contraseña incorrecta",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"NEG login: status 400 o 401\", () => pm.expect(pm.response.code).to.be.oneOf([400, 401]));"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "username",
+                      "value": "{{username}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "password",
+                      "value": "claveincorrecta123",
+                      "type": "text"
+                    },
+                    {
+                      "key": "grant_type",
+                      "value": "password",
+                      "type": "text"
+                    },
+                    {
+                      "key": "client_id",
+                      "value": "67d6c2ddad5a48b8ac66a34e4b3fff00",
+                      "type": "text"
+                    },
+                    {
+                      "key": "scope",
+                      "value": "timekeeper schedule employee auth mdm_psc custom_reports\n",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/v1/login",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "login"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "[NEG-02] Login con contraseña incorrecta",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "formdata",
+                      "formdata": [
+                        {
+                          "key": "username",
+                          "value": "{{username}}",
+                          "type": "text"
+                        },
+                        {
+                          "key": "password",
+                          "value": "claveincorrecta123",
+                          "type": "text"
+                        },
+                        {
+                          "key": "grant_type",
+                          "value": "password",
+                          "type": "text"
+                        },
+                        {
+                          "key": "client_id",
+                          "value": "67d6c2ddad5a48b8ac66a34e4b3fff00",
+                          "type": "text"
+                        },
+                        {
+                          "key": "scope",
+                          "value": "timekeeper schedule employee auth mdm_psc custom_reports\n",
+                          "type": "text"
+                        }
+                      ]
+                    },
+                    "url": {
+                      "raw": "{{base_url}}/v1/login",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "login"
+                      ]
+                    }
+                  },
+                  "status": "Bad Request",
+                  "code": 400,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "content-type",
+                      "value": "application/json"
+                    },
+                    {
+                      "key": "vary",
+                      "value": "Accept-Encoding"
+                    },
+                    {
+                      "key": "content-encoding",
+                      "value": "gzip"
+                    },
+                    {
+                      "key": "server",
+                      "value": "istio-envoy"
+                    },
+                    {
+                      "key": "date",
+                      "value": "Fri, 25 Sep 2026 06:19:49 GMT"
+                    },
+                    {
+                      "key": "x-envoy-upstream-service-time",
+                      "value": "17909"
+                    },
+                    {
+                      "key": "via",
+                      "value": "1.1 google"
+                    },
+                    {
+                      "key": "alt-svc",
+                      "value": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000"
+                    },
+                    {
+                      "key": "transfer-encoding",
+                      "value": "chunked"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"detail\": \"Invalid username or password\"\n}"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Timekeeper",
+          "item": [
+            {
+              "name": "[GET] /v1/timekeeper/punch_match",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Punch match: status 200\", () => pm.response.to.have.status(200));\r\npm.test(\"Punch match: tiempo < 1000 ms\", () => pm.expect(pm.response.responseTime).to.be.below(1000));\r\npm.test(\"Punch match: responde JSON\", () => {\r\n  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r\n});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/v1/timekeeper/punch_match?employee_id={{employee_id}}&start={{date_start}}&end={{date_end}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "timekeeper",
+                    "punch_match"
+                  ],
+                  "query": [
+                    {
+                      "key": "employee_id",
+                      "value": "{{employee_id}}"
+                    },
+                    {
+                      "key": "start",
+                      "value": "{{date_start}}"
+                    },
+                    {
+                      "key": "end",
+                      "value": "{{date_end}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "[POST] /v1/mdm_psc/punches/replace_punches",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Replace punches: status 200\", () => pm.response.to.have.status(200));\r\npm.test(\"Replace punches: tiempo < 15000 ms\", () => pm.expect(pm.response.responseTime).to.be.below(15000));\r\nconst json = pm.response.json();\r\npm.test(\"Replace punches: created_punches = 1\", () => pm.expect(json.data.created_punches).to.eql(1));"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"disable_ids\": [1],\n  \"punches\": [\n    {\n      \"punch_dtm\": \"2026-09-12T13:00:00\",\n      \"employee_id\": 1,\n      \"device_id\": -1,\n      \"in_out\": true,\n      \"online\": true,\n      \"type_autentification\": \"finger\",\n      \"timezone\": \"America/Santiago\",\n      \"extra_data\": \"qa-test-2\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/v1/mdm_psc/punches/replace_punches",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "mdm_psc",
+                    "punches",
+                    "replace_punches"
+                  ]
+                },
+                "description": "Endpoint para reemplazar/eliminar/agregar marcas"
+              },
+              "response": [
+                {
+                  "name": "Ejemplo Respuesta Reemplazar Marcas",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"disable_ids\": [\n    78\n  ],\n  \"punches\": [\n    {\n      \"punch_dtm\": \"2026-09-01T21:00:00\",\n      \"employee_id\": 8,\n      \"device_id\": -1,\n      \"in_out\": false,\n      \"online\": true,\n      \"type_autentification\": \"finger\",\n      \"timezone\": \"America/Santiago\",\n      \"extra_data\": \"tk-gr.demo.goodrabbit.tech\"\n    }\n  ]\n}"
+                    },
+                    "url": {
+                      "raw": "{{base_url}}/v1/mdm_psc/punches/replace_punches",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "mdm_psc",
+                        "punches",
+                        "replace_punches"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [],
+                  "cookie": [],
+                  "body": "{\n  \"data\": {\n    \"disable_punches\": [\n      {\n        \"created_at\": \"2026-09-11T12:37:03.731202\",\n        \"employee_id\": 8,\n        \"id\": 78,\n        \"in_out\": true,\n        \"type_autentification\": \"finger\",\n        \"timezone\": \"America/Santiago\",\n        \"photo_path\": null,\n        \"info_status\": \"refused\",\n        \"extra_data\": null,\n        \"punch_dtm\": \"2026-09-02T13:00:00\",\n        \"device_id\": -1,\n        \"online\": true,\n        \"status\": false,\n        \"punch_match_id\": null\n      }\n    ],\n    \"created_punches\": 1\n  }\n}"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Scheduler",
+          "item": [
+            {
+              "name": "[POST] /v1/schedule/shift/assign",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Assign: status 200\", () => pm.response.to.have.status(200));\r\npm.test(\"Assign: tiempo < 1500 ms\", () => pm.expect(pm.response.responseTime).to.be.below(1500));\r\nconst json = pm.response.json();\r\npm.test(\"Assign: status = success\", () => pm.expect(json.status).to.eql(\"success\"));\r\npm.test(\"Assign: sin errores\", () => pm.expect(json.data.total_errors).to.eql(0));"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"shift\": {\n    \"employee_id\": 0,\n    \"date\": \"2026-09-15\",\n    \"start_ts\": \"13:00:00\",\n    \"end_ts\": \"22:00:00\",\n    \"duration\": \"09:00:00\",\n    \"timezone\": \"America/Santiago\",\n    \"override\": false,\n    \"schedule_create\": true,\n    \"enable\": true,\n    \"segments\": [\n      {\n        \"type\": \"REGULAR\",\n        \"start_ts\": \"2026-09-15T13:00:00.000Z\",\n        \"end_ts\": \"2026-09-15T22:00:00.000Z\"\n      }\n    ]\n  },\n  \"employee_ids\": [1],\n  \"repeat\": 1\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/v1/schedule/shift/assign",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "schedule",
+                    "shift",
+                    "assign"
+                  ]
+                },
+                "description": "Endpoint para asignar turnos a empleados"
+              },
+              "response": [
+                {
+                  "name": "Ejemplo Respuesta Asignar Turno",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"shift\": {\n    \"employee_id\": 0,\n    \"date\": \"2026-09-01\",\n    \"start_ts\": \"13:00:00\",\n    \"end_ts\": \"22:00:00\",\n    \"duration\": \"09:00:00\",\n    \"timezone\": \"America/Santiago\",\n    \"override\": false,\n    \"schedule_create\": true,\n    \"enable\": true,\n    \"segments\": [\n      {\n        \"type\": \"REGULAR\",\n        \"start_ts\": \"2026-09-01T13:00:00.000Z\",\n        \"end_ts\": \"2026-09-01T22:00:00.000Z\"\n      }\n    ]\n  },\n  \"employee_ids\": [\n    8\n  ],\n  \"repeat\": 2\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{base_url}}/v1/schedule/shift/assign",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "schedule",
+                        "shift",
+                        "assign"
+                      ]
+                    },
+                    "description": "Endpoint para asignar turnos a empleados"
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [],
+                  "cookie": [],
+                  "body": "{\n  \"status\": \"success\",\n  \"data\": {\n    \"success\": [\n      {\n        \"shift_id\": 61,\n        \"employee_id\": 8,\n        \"date\": \"2026-09-01\",\n        \"start_ts\": \"13:00:00\",\n        \"end_ts\": \"22:00:00\",\n        \"duration\": \"09:00:00\",\n        \"timezone\": \"America/Santiago\",\n        \"override\": false,\n        \"segments\": [],\n        \"scheduler_create\": false,\n        \"enable\": true,\n        \"absence_extend_shift\": null\n      },\n      {\n        \"shift_id\": 62,\n        \"employee_id\": 8,\n        \"date\": \"2026-09-02\",\n        \"start_ts\": \"13:00:00\",\n        \"end_ts\": \"22:00:00\",\n        \"duration\": \"09:00:00\",\n        \"timezone\": \"America/Santiago\",\n        \"override\": false,\n        \"segments\": [],\n        \"scheduler_create\": false,\n        \"enable\": true,\n        \"absence_extend_shift\": null\n      }\n    ],\n    \"errors\": []\n  }\n}"
+                }
+              ]
+            },
+            {
+              "name": "[NEG-05] Assign con hora de término anterior a la de inicio",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "let body = {};\r\ntry { body = pm.response.json(); } catch (e) {}\r\nconst created = (body.data && body.data.success) ? body.data.success : [];\r\n\r\npm.test(\"NEG horas invertidas: no se crea ningun turno\", () => pm.expect(created).to.be.empty);\r\npm.test(\"NEG horas invertidas: se informa error de validacion\", () => {\r\n  const rechazado = [400, 422].includes(pm.response.code);\r\n  const conErrores = pm.response.code === 200 && body.data && body.data.total_errors > 0;\r\n  pm.expect(rechazado || conErrores, \"Codigo: \" + pm.response.code).to.be.true;\r\n});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"shift\": {\n    \"employee_id\": 0,\n    \"date\": \"2026-09-20\",\n    \"start_ts\": \"22:00:00\",\n    \"end_ts\": \"13:00:00\",\n    \"duration\": \"09:00:00\",\n    \"timezone\": \"America/Santiago\",\n    \"override\": false,\n    \"schedule_create\": true,\n    \"enable\": true,\n    \"segments\": [\n      {\n        \"type\": \"REGULAR\",\n        \"start_ts\": \"2026-09-20T22:00:00.000Z\",\n        \"end_ts\": \"2026-09-20T13:00:00.000Z\"\n      }\n    ]\n  },\n  \"employee_ids\": [1],\n  \"repeat\": 1\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/v1/schedule/shift/assign",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "schedule",
+                    "shift",
+                    "assign"
+                  ]
+                },
+                "description": "Endpoint para asignar turnos a empleados"
+              },
+              "response": [
+                {
+                  "name": "Ejemplo Respuesta Asignar Turno",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"shift\": {\n    \"employee_id\": 0,\n    \"date\": \"2026-09-01\",\n    \"start_ts\": \"13:00:00\",\n    \"end_ts\": \"22:00:00\",\n    \"duration\": \"09:00:00\",\n    \"timezone\": \"America/Santiago\",\n    \"override\": false,\n    \"schedule_create\": true,\n    \"enable\": true,\n    \"segments\": [\n      {\n        \"type\": \"REGULAR\",\n        \"start_ts\": \"2026-09-01T13:00:00.000Z\",\n        \"end_ts\": \"2026-09-01T22:00:00.000Z\"\n      }\n    ]\n  },\n  \"employee_ids\": [\n    8\n  ],\n  \"repeat\": 2\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{base_url}}/v1/schedule/shift/assign",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "schedule",
+                        "shift",
+                        "assign"
+                      ]
+                    },
+                    "description": "Endpoint para asignar turnos a empleados"
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [],
+                  "cookie": [],
+                  "body": "{\n  \"status\": \"success\",\n  \"data\": {\n    \"success\": [\n      {\n        \"shift_id\": 61,\n        \"employee_id\": 8,\n        \"date\": \"2026-09-01\",\n        \"start_ts\": \"13:00:00\",\n        \"end_ts\": \"22:00:00\",\n        \"duration\": \"09:00:00\",\n        \"timezone\": \"America/Santiago\",\n        \"override\": false,\n        \"segments\": [],\n        \"scheduler_create\": false,\n        \"enable\": true,\n        \"absence_extend_shift\": null\n      },\n      {\n        \"shift_id\": 62,\n        \"employee_id\": 8,\n        \"date\": \"2026-09-02\",\n        \"start_ts\": \"13:00:00\",\n        \"end_ts\": \"22:00:00\",\n        \"duration\": \"09:00:00\",\n        \"timezone\": \"America/Santiago\",\n        \"override\": false,\n        \"segments\": [],\n        \"scheduler_create\": false,\n        \"enable\": true,\n        \"absence_extend_shift\": null\n      }\n    ],\n    \"errors\": []\n  }\n}"
+                }
+              ]
+            },
+            {
+              "name": "[NEG-04] Assign a empleado inexistente",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "let body = {};\r\ntry { body = pm.response.json(); } catch (e) {}\r\nconst created = (body.data && body.data.success) ? body.data.success : [];\r\n\r\npm.test(\"NEG empleado inexistente: no se crea ningun turno\", () => pm.expect(created).to.be.empty);\r\npm.test(\"NEG empleado inexistente: se informa el error (4xx o total_errors > 0)\", () => {\r\n  const rechazado = [400, 404, 422].includes(pm.response.code);\r\n  const conErrores = pm.response.code === 200 && body.data && body.data.total_errors > 0;\r\n  pm.expect(rechazado || conErrores, \"Codigo: \" + pm.response.code).to.be.true;\r\n});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"shift\": {\n    \"employee_id\": 0,\n    \"date\": \"2026-09-01\",\n    \"start_ts\": \"13:00:00\",\n    \"end_ts\": \"22:00:00\",\n    \"duration\": \"09:00:00\",\n    \"timezone\": \"America/Santiago\",\n    \"override\": false,\n    \"schedule_create\": true,\n    \"enable\": true,\n    \"segments\": [\n      {\n        \"type\": \"REGULAR\",\n        \"start_ts\": \"2026-09-01T13:00:00.000Z\",\n        \"end_ts\": \"2026-09-01T22:00:00.000Z\"\n      }\n    ]\n  },\n  \"employee_ids\": [\n    999999\n  ],\n  \"repeat\": 2\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/v1/schedule/shift/assign",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "schedule",
+                    "shift",
+                    "assign"
+                  ]
+                },
+                "description": "Endpoint para asignar turnos a empleados"
+              },
+              "response": [
+                {
+                  "name": "Ejemplo Respuesta Asignar Turno",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"shift\": {\n    \"employee_id\": 0,\n    \"date\": \"2026-09-01\",\n    \"start_ts\": \"13:00:00\",\n    \"end_ts\": \"22:00:00\",\n    \"duration\": \"09:00:00\",\n    \"timezone\": \"America/Santiago\",\n    \"override\": false,\n    \"schedule_create\": true,\n    \"enable\": true,\n    \"segments\": [\n      {\n        \"type\": \"REGULAR\",\n        \"start_ts\": \"2026-09-01T13:00:00.000Z\",\n        \"end_ts\": \"2026-09-01T22:00:00.000Z\"\n      }\n    ]\n  },\n  \"employee_ids\": [\n    8\n  ],\n  \"repeat\": 2\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{base_url}}/v1/schedule/shift/assign",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "schedule",
+                        "shift",
+                        "assign"
+                      ]
+                    },
+                    "description": "Endpoint para asignar turnos a empleados"
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [],
+                  "cookie": [],
+                  "body": "{\n  \"status\": \"success\",\n  \"data\": {\n    \"success\": [\n      {\n        \"shift_id\": 61,\n        \"employee_id\": 8,\n        \"date\": \"2026-09-01\",\n        \"start_ts\": \"13:00:00\",\n        \"end_ts\": \"22:00:00\",\n        \"duration\": \"09:00:00\",\n        \"timezone\": \"America/Santiago\",\n        \"override\": false,\n        \"segments\": [],\n        \"scheduler_create\": false,\n        \"enable\": true,\n        \"absence_extend_shift\": null\n      },\n      {\n        \"shift_id\": 62,\n        \"employee_id\": 8,\n        \"date\": \"2026-09-02\",\n        \"start_ts\": \"13:00:00\",\n        \"end_ts\": \"22:00:00\",\n        \"duration\": \"09:00:00\",\n        \"timezone\": \"America/Santiago\",\n        \"override\": false,\n        \"segments\": [],\n        \"scheduler_create\": false,\n        \"enable\": true,\n        \"absence_extend_shift\": null\n      }\n    ],\n    \"errors\": []\n  }\n}"
+                }
+              ]
+            },
+            {
+              "name": "[NEG-03] Assign sin token",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"NEG sin token: status 401\", () => pm.response.to.have.status(401));"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"shift\": {\n    \"employee_id\": 0,\n    \"date\": \"2026-09-01\",\n    \"start_ts\": \"13:00:00\",\n    \"end_ts\": \"22:00:00\",\n    \"duration\": \"09:00:00\",\n    \"timezone\": \"America/Santiago\",\n    \"override\": false,\n    \"schedule_create\": true,\n    \"enable\": true,\n    \"segments\": [\n      {\n        \"type\": \"REGULAR\",\n        \"start_ts\": \"2026-09-01T13:00:00.000Z\",\n        \"end_ts\": \"2026-09-01T22:00:00.000Z\"\n      }\n    ]\n  },\n  \"employee_ids\": [\n    8\n  ],\n  \"repeat\": 2\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/v1/schedule/shift/assign",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "schedule",
+                    "shift",
+                    "assign"
+                  ]
+                },
+                "description": "Endpoint para asignar turnos a empleados"
+              },
+              "response": [
+                {
+                  "name": "Ejemplo Respuesta Asignar Turno",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"shift\": {\n    \"employee_id\": 0,\n    \"date\": \"2026-09-01\",\n    \"start_ts\": \"13:00:00\",\n    \"end_ts\": \"22:00:00\",\n    \"duration\": \"09:00:00\",\n    \"timezone\": \"America/Santiago\",\n    \"override\": false,\n    \"schedule_create\": true,\n    \"enable\": true,\n    \"segments\": [\n      {\n        \"type\": \"REGULAR\",\n        \"start_ts\": \"2026-09-01T13:00:00.000Z\",\n        \"end_ts\": \"2026-09-01T22:00:00.000Z\"\n      }\n    ]\n  },\n  \"employee_ids\": [\n    8\n  ],\n  \"repeat\": 2\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{base_url}}/v1/schedule/shift/assign",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "schedule",
+                        "shift",
+                        "assign"
+                      ]
+                    },
+                    "description": "Endpoint para asignar turnos a empleados"
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [],
+                  "cookie": [],
+                  "body": "{\n  \"status\": \"success\",\n  \"data\": {\n    \"success\": [\n      {\n        \"shift_id\": 61,\n        \"employee_id\": 8,\n        \"date\": \"2026-09-01\",\n        \"start_ts\": \"13:00:00\",\n        \"end_ts\": \"22:00:00\",\n        \"duration\": \"09:00:00\",\n        \"timezone\": \"America/Santiago\",\n        \"override\": false,\n        \"segments\": [],\n        \"scheduler_create\": false,\n        \"enable\": true,\n        \"absence_extend_shift\": null\n      },\n      {\n        \"shift_id\": 62,\n        \"employee_id\": 8,\n        \"date\": \"2026-09-02\",\n        \"start_ts\": \"13:00:00\",\n        \"end_ts\": \"22:00:00\",\n        \"duration\": \"09:00:00\",\n        \"timezone\": \"America/Santiago\",\n        \"override\": false,\n        \"segments\": [],\n        \"scheduler_create\": false,\n        \"enable\": true,\n        \"absence_extend_shift\": null\n      }\n    ],\n    \"errors\": []\n  }\n}"
+                }
+              ]
+            },
+            {
+              "name": "[GET] /v1/schedule/shift/schedule",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Schedule: status 200\", () => pm.response.to.have.status(200));\r\npm.test(\"Schedule: tiempo < 1000 ms\", () => pm.expect(pm.response.responseTime).to.be.below(1000));\r\nconst json = pm.response.json();\r\npm.test(\"Schedule: status = success y data es arreglo\", () => {\r\n  pm.expect(json.status).to.eql(\"success\");\r\n  pm.expect(json.data).to.be.an(\"array\");\r\n});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/v1/schedule/shift/schedule?employee_id__in={{employee_id}}&start_date={{date_start}}&end_date={{date_end}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "schedule",
+                    "shift",
+                    "schedule"
+                  ],
+                  "query": [
+                    {
+                      "key": "employee_id__in",
+                      "value": "{{employee_id}}"
+                    },
+                    {
+                      "key": "start_date",
+                      "value": "{{date_start}}"
+                    },
+                    {
+                      "key": "end_date",
+                      "value": "{{date_end}}"
+                    }
+                  ]
+                },
+                "description": "Endpoint para obtener turnos/programación"
+              },
+              "response": [
+                {
+                  "name": "Ejemplo Respuesta Obtener Turnos",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{base_url}}/v1/schedule/shift/schedule?employee_id__in={{employee_id}}&start_date={{date_start}}&end_date={{date_end}}",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "schedule",
+                        "shift",
+                        "schedule"
+                      ],
+                      "query": [
+                        {
+                          "key": "employee_id__in",
+                          "value": "{{employee_id}}"
+                        },
+                        {
+                          "key": "start_date",
+                          "value": "{{date_start}}"
+                        },
+                        {
+                          "key": "end_date",
+                          "value": "{{date_end}}"
+                        }
+                      ]
+                    },
+                    "description": "Endpoint para obtener turnos/programación"
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [],
+                  "cookie": [],
+                  "body": "{\n  \"status\": \"success\",\n  \"data\": [\n    {\n      \"shift_id\": 62,\n      \"employee_id\": 8,\n      \"date\": \"2026-09-02\",\n      \"start_ts\": \"13:00:00\",\n      \"end_ts\": \"22:00:00\",\n      \"duration\": \"09:00:00\",\n      \"timezone\": \"America/Santiago\",\n      \"override\": false,\n      \"segments\": [\n        {\n          \"segment_id\": 103,\n          \"shift_id\": 62,\n          \"type\": \"REGULAR\",\n          \"start_ts\": \"2026-09-02T13:00:00Z\",\n          \"end_ts\": \"2026-09-02T22:00:00Z\",\n          \"orgpath_id\": null,\n          \"work_rule_id\": null,\n          \"orgpath\": null\n        }\n      ],\n      \"scheduler_create\": false,\n      \"enable\": true,\n      \"absence_extend_shift\": null\n    },\n    {\n      \"shift_id\": 61,\n      \"employee_id\": 8,\n      \"date\": \"2026-09-01\",\n      \"start_ts\": \"13:00:00\",\n      \"end_ts\": \"22:00:00\",\n      \"duration\": \"09:00:00\",\n      \"timezone\": \"America/Santiago\",\n      \"override\": false,\n      \"segments\": [\n        {\n          \"segment_id\": 102,\n          \"shift_id\": 61,\n          \"type\": \"REGULAR\",\n          \"start_ts\": \"2026-09-01T13:00:00Z\",\n          \"end_ts\": \"2026-09-01T22:00:00Z\",\n          \"orgpath_id\": null,\n          \"work_rule_id\": null,\n          \"orgpath\": null\n        }\n      ],\n      \"scheduler_create\": false,\n      \"enable\": true,\n      \"absence_extend_shift\": null\n    }\n  ]\n}"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearer_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://demo.timekeeper.goodrabbit.tech"
+    },
+    {
+      "key": "username",
+      "value": "admin"
+    },
+    {
+      "key": "password",
+      "value": ""
+    },
+    {
+      "key": "bearer_token",
+      "value": ""
+    },
+    {
+      "key": "employee_id",
+      "value": "1"
+    },
+    {
+      "key": "date_start",
+      "value": "2026-09-01"
+    },
+    {
+      "key": "date_end",
+      "value": "2026-09-30"
+    },
+    {
+      "key": "refresh_token",
+      "value": ""
+    },
+    {
+      "key": "token_expires_at",
+      "value": ""
+    }
+  ]
+}
