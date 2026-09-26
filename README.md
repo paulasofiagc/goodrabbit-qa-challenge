@@ -22,24 +22,29 @@ Se eligió porque cubre en una sola historia el login, los permisos, la validaci
 
 ```
 goodrabbit-qa-challenge/
+│
 ├── README.md
 ├── package.json
 ├── .gitignore
+│
 ├── 1-gherkin/
 │   └── scheduler_auth.feature
+│
 ├── 2-postman/
 │   └── Timekeeper Project (QA) - Tests.postman_collection.json
+│
 ├── 3-bug-report/
 │   ├── BUG-001.md
 │   ├── BUG-002.md
 │   ├── BUG-003.md
-│   └── BUG-004.md
+│   ├── BUG-004.md
 │   └── BUG-005.md
 │
 ├── 4-bonus/
 │   └── load-test.js
+│
 └── evidencias/
-    └── (capturas del bloqueo inicial, nslookup, y evidencias de los 4 bugs)
+    └── (capturas del bloqueo inicial, nslookup y evidencias de los 5 bugs)
 ```
 
 ---
@@ -49,8 +54,8 @@ goodrabbit-qa-challenge/
 | # | Entregable | Peso | Estado |
 |---|---|---|---|
 | 3.a | Casos de prueba en Gherkin (5 escenarios) | 25% | **Completado**, validado sintácticamente y confirmado contra el ambiente real |
-| 3.b | Pruebas de API y aserciones en Postman | 25% | **Completado** — 31+ aserciones ejecutadas contra el ambiente real, todas en verde |
-| 3.c | Reporte de incidencias | 20% | **Completado** — 4 bugs reales, reproducibles y documentados |
+| 3.b | Pruebas de API y aserciones en Postman | 25% | **Completado** — 31+ aserciones ejecutadas, incluyendo validaciones que permitieron detectar incumplimientos de tiempo de respuesta documentados en BUG-002. |
+| 3.c | Reporte de incidencias | 20% | **Completado** — 5 bugs reales, reproducibles y documentados |
 | 4 | Bonus: pruebas de carga (k6) | 20% | **Completado** — script en `4-bonus/load-test.js`, halló BUG-004 |
 | 5 | Orden y documentación | 10% | Este documento |
 
@@ -66,7 +71,7 @@ Archivo: [`1-gherkin/scheduler_auth.feature`](1-gherkin/scheduler_auth.feature)
 | 4 | Asignar turno a un empleado inexistente | Datos inválidos | 400 (ver BUG-003) |
 | 5 | Asignar turno con hora de término anterior a la de inicio | Caso borde | 400 |
 
-Se cumple el mínimo pedido (1 camino feliz y 2 o más escenarios de borde, datos inválidos o falta de permisos) y se cubren las tres categorías. Los 5 escenarios fueron ejecutados y verificados contra el ambiente real mediante los requests `[NEG-02]` a `[NEG-05]` de la colección Postman (sin códigos supuestos: todo confirmado).
+Se cumple el mínimo pedido (1 camino feliz y 2 o más escenarios de borde, datos inválidos o falta de permisos) y se cubren las tres categorías. Los 5 escenarios fueron ejecutados y verificados contra el ambiente real mediante los requests correspondientes de la colección Postman.
 
 **Validación de sintaxis:**
 
@@ -82,7 +87,7 @@ Resultado obtenido: `5 scenarios (5 undefined), 34 steps (34 undefined)`. Sin er
 Colección: [`2-postman/Timekeeper Project (QA) - Tests.postman_collection.json`](2-postman/) — basada en la entregada con el reto, con correcciones de URL, `client_id`, esquemas de body, tests y los 4 casos negativos.
 
 **Incluye:**
-- Login con guardado dinámico del `access_token` y `refresh_token`, y renovación automática antes de que expire (el token dura solo ~10 minutos).
+- - Login con guardado dinámico del `access_token` y `refresh_token`. El `access_token` queda disponible automáticamente en la variable de colección `bearer_token` para las solicitudes autenticadas.
 - Aserciones en la pestaña Tests para todos los endpoints: código HTTP, esquema JSON y tiempo de respuesta.
 - 4 requests negativos, uno por cada escenario Gherkin (2 al 5), más un negativo adicional para `GET /v1/schedule/shift/schedule` sin autenticación.
 
@@ -179,7 +184,7 @@ El bloqueo fue reportado a la reclutadora el 23 de septiembre de 2026. Capturas 
 1. Importar la colección de `2-postman/` en Postman.
 2. En las variables de la colección, completar `username` y `password` con las credenciales entregadas. **No subir credenciales al repositorio.**
 3. Verificar que `base_url` sea `https://demo.timekeeper.goodrabbit.tech`.
-4. Ejecutar primero `[POST] /v1/login`. El token se guarda automáticamente en `bearer_token` (expira en ~10 minutos; se renueva antes de cada request posterior).
+4. Ejecutar primero `[POST] /v1/login`. El token se guarda automáticamente en `bearer_token` y queda disponible para los requests autenticados.
 5. Ejecutar los demás requests, o la colección completa desde el Runner.
 
 ### Configuración de k6
@@ -199,7 +204,7 @@ Confirmados contra el ambiente real:
 5. **Warning `NO_RULESET_ASSIGNED`:** al asignar un turno, el sistema advierte que el empleado no tiene una regla de horas extra/descansos asignada, pero crea el turno igual. Queda como pregunta para el equipo de producto.
 6. **`disable_ids` con un ID inexistente no genera error:** en `replace_punches`, enviar un ID de marca que no existe no produce ningún error ni advertencia (detalle ampliado en BUG-002).
 7. **Punto positivo — validación de horario ejemplar:** `assign` valida correctamente que `start_ts` sea menor o igual a `end_ts`, con un mensaje de error claro y específico, a diferencia de otros endpoints con mensajes genéricos.
-8. **4 bugs documentados**, incluyendo una falla crítica de disponibilidad bajo carga (ver sección 3.c y `3-bug-report/`).
+8. **5 bugs documentados**, incluyendo una falla crítica de disponibilidad bajo carga (ver sección 3.c y `3-bug-report/`).
 
 ---
 
@@ -215,5 +220,4 @@ Confirmados contra el ambiente real:
 
 ## 8. Próximos pasos
 
-- [ ] Completar capturas y logs en `evidencias/` (bloqueo inicial, los 4 bugs, salida completa de k6)
 - [ ] Preparar la presentación (PPT breve, 45 minutos), con foco en la narrativa BUG-002 → BUG-004
