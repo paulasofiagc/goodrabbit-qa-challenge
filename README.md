@@ -14,7 +14,7 @@ Este repositorio contiene el desarrollo del challenge técnico QA de GoodRabbit 
 **Flujo principal elegido:** Autenticación + Asignación de turnos en el Scheduler.
 Se eligió porque cubre en una sola historia el login, los permisos, la validación de datos y la consulta posterior del resultado, y coincide con los endpoints que el reto pide auditar en Postman (`/v1/login`, `/v1/schedule/shift/assign`, `/v1/schedule/shift/schedule`).
 
-> **Nota sobre el ambiente:** la URL entregada inicialmente (`tk-gr.demo.goodrabbit.tech`) no resolvía. Tras reportarlo, se recibió una versión corregida del challenge con la URL correcta (`demo.timekeeper.goodrabbit.tech`). Con el acceso restablecido, se ejecutó la colección completa contra el ambiente real (31+ aserciones automatizadas) y una prueba de carga con k6, identificando y documentando **4 defectos reales** (ver `3-bug-report/`), el más crítico descubierto gracias al bonus de performance.
+> **Nota sobre el ambiente:** la URL entregada inicialmente (`tk-gr.demo.goodrabbit.tech`) no resolvía. Tras reportarlo, se recibió una versión corregida del challenge con la URL correcta (`demo.timekeeper.goodrabbit.tech`). Con el acceso restablecido, se ejecutó la colección completa contra el ambiente real (31+ aserciones automatizadas) y una prueba de carga con k6, identificando y documentando **5 defectos reales** (ver `3-bug-report/`), el más crítico descubierto gracias al bonus de performance.
 
 ---
 
@@ -34,6 +34,8 @@ goodrabbit-qa-challenge/
 │   ├── BUG-002.md
 │   ├── BUG-003.md
 │   └── BUG-004.md
+│   └── BUG-005.md
+│
 ├── 4-bonus/
 │   └── load-test.js
 └── evidencias/
@@ -110,6 +112,7 @@ Validación cruzada adicional: los empleados y turnos creados vía API se verifi
 | [`BUG-002.md`](3-bug-report/BUG-002.md) | Media-Alta | Performance | Latencia de 10 a 18 segundos en operaciones de escritura (`login`, `replace_punches`), tanto en éxito como en fallo |
 | [`BUG-003.md`](3-bug-report/BUG-003.md) | Media | Seguridad | El error de "empleado inexistente" expone la URL interna del microservicio de Empleados en el clúster (`*.svc.cluster.local`) |
 | [`BUG-004.md`](3-bug-report/BUG-004.md) | **Crítica** | Disponibilidad | El backend de autenticación colapsa (503/504) con solo 5 usuarios concurrentes; hallado con el bonus de k6 |
+| [`BUG-005.md`](3-bug-report/BUG-005.md) | Alta | Funcional | Los turnos asignados se muestran con un desfase de hasta 3 horas en el Dashboard, por una contradicción entre `shift.start_ts` y `segments[].start_ts` (UTC) |
 
 BUG-004 es el hallazgo de mayor impacto del challenge: confirma bajo carga real la sospecha que dejó abierta BUG-002, y revela una falla de disponibilidad crítica que afectaría a cualquier grupo pequeño de usuarios iniciando sesión al mismo tiempo.
 
