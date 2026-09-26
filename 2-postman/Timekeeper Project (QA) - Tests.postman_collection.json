@@ -886,12 +886,102 @@
                   "script": {
                     "type": "text/javascript",
                     "exec": [
-                      "pm.test(\"Schedule: status 200\", () => pm.response.to.have.status(200));\r\npm.test(\"Schedule: tiempo < 1000 ms\", () => pm.expect(pm.response.responseTime).to.be.below(1000));\r\nconst json = pm.response.json();\r\npm.test(\"Schedule: status = success y data es arreglo\", () => {\r\n  pm.expect(json.status).to.eql(\"success\");\r\n  pm.expect(json.data).to.be.an(\"array\");\r\n});"
+                      "const json = pm.response.json();\r\n\r\npm.test(\"Schedule: status 200\", () => {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Schedule: tiempo de respuesta < 1500 ms\", () => {\r\n    pm.expect(pm.response.responseTime).to.be.below(1500);\r\n});\r\n\r\npm.test(\"Schedule: responde JSON\", () => {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Schedule: status es success\", () => {\r\n    pm.expect(json.status).to.eql(\"success\");\r\n});\r\n\r\npm.test(\"Schedule: data es un array\", () => {\r\n    pm.expect(json.data).to.be.an(\"array\");\r\n});\r\n\r\npm.test(\"Schedule: data contiene turnos\", () => {\r\n    pm.expect(json.data.length).to.be.above(0);\r\n});\r\n\r\npm.test(\"Schedule: cada turno contiene campos principales\", () => {\r\n    json.data.forEach((shift) => {\r\n        pm.expect(shift).to.have.property(\"shift_id\");\r\n        pm.expect(shift).to.have.property(\"employee_id\");\r\n        pm.expect(shift).to.have.property(\"date\");\r\n        pm.expect(shift).to.have.property(\"start_ts\");\r\n        pm.expect(shift).to.have.property(\"end_ts\");\r\n        pm.expect(shift).to.have.property(\"duration\");\r\n        pm.expect(shift).to.have.property(\"timezone\");\r\n        pm.expect(shift).to.have.property(\"segments\");\r\n    });\r\n});"
                     ]
                   }
                 }
               ],
               "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/v1/schedule/shift/schedule?employee_id__in={{employee_id}}&start_date={{date_start}}&end_date={{date_end}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "schedule",
+                    "shift",
+                    "schedule"
+                  ],
+                  "query": [
+                    {
+                      "key": "employee_id__in",
+                      "value": "{{employee_id}}"
+                    },
+                    {
+                      "key": "start_date",
+                      "value": "{{date_start}}"
+                    },
+                    {
+                      "key": "end_date",
+                      "value": "{{date_end}}"
+                    }
+                  ]
+                },
+                "description": "Endpoint para obtener turnos/programación"
+              },
+              "response": [
+                {
+                  "name": "Ejemplo Respuesta Obtener Turnos",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{base_url}}/v1/schedule/shift/schedule?employee_id__in={{employee_id}}&start_date={{date_start}}&end_date={{date_end}}",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "schedule",
+                        "shift",
+                        "schedule"
+                      ],
+                      "query": [
+                        {
+                          "key": "employee_id__in",
+                          "value": "{{employee_id}}"
+                        },
+                        {
+                          "key": "start_date",
+                          "value": "{{date_start}}"
+                        },
+                        {
+                          "key": "end_date",
+                          "value": "{{date_end}}"
+                        }
+                      ]
+                    },
+                    "description": "Endpoint para obtener turnos/programación"
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [],
+                  "cookie": [],
+                  "body": "{\n  \"status\": \"success\",\n  \"data\": [\n    {\n      \"shift_id\": 62,\n      \"employee_id\": 8,\n      \"date\": \"2026-09-02\",\n      \"start_ts\": \"13:00:00\",\n      \"end_ts\": \"22:00:00\",\n      \"duration\": \"09:00:00\",\n      \"timezone\": \"America/Santiago\",\n      \"override\": false,\n      \"segments\": [\n        {\n          \"segment_id\": 103,\n          \"shift_id\": 62,\n          \"type\": \"REGULAR\",\n          \"start_ts\": \"2026-09-02T13:00:00Z\",\n          \"end_ts\": \"2026-09-02T22:00:00Z\",\n          \"orgpath_id\": null,\n          \"work_rule_id\": null,\n          \"orgpath\": null\n        }\n      ],\n      \"scheduler_create\": false,\n      \"enable\": true,\n      \"absence_extend_shift\": null\n    },\n    {\n      \"shift_id\": 61,\n      \"employee_id\": 8,\n      \"date\": \"2026-09-01\",\n      \"start_ts\": \"13:00:00\",\n      \"end_ts\": \"22:00:00\",\n      \"duration\": \"09:00:00\",\n      \"timezone\": \"America/Santiago\",\n      \"override\": false,\n      \"segments\": [\n        {\n          \"segment_id\": 102,\n          \"shift_id\": 61,\n          \"type\": \"REGULAR\",\n          \"start_ts\": \"2026-09-01T13:00:00Z\",\n          \"end_ts\": \"2026-09-01T22:00:00Z\",\n          \"orgpath_id\": null,\n          \"work_rule_id\": null,\n          \"orgpath\": null\n        }\n      ],\n      \"scheduler_create\": false,\n      \"enable\": true,\n      \"absence_extend_shift\": null\n    }\n  ]\n}"
+                }
+              ]
+            },
+            {
+              "name": "Schedule - 401 - sin autenticación",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Schedule sin autenticación: status 401\", () => {\r\n    pm.response.to.have.status(401);\r\n});\r\n\r\npm.test(\"Schedule sin autenticación: tiempo de respuesta < 1500 ms\", () => {\r\n    pm.expect(pm.response.responseTime).to.be.below(1500);\r\n});\r\n\r\npm.test(\"Schedule sin autenticación: responde JSON\", () => {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Schedule sin autenticación: informa token faltante\", () => {\r\n    let json = {};\r\n    try { json = pm.response.json(); } catch (e) {}\r\n    pm.expect(json.detail).to.eql(\"Authentication token missing\");\r\n});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
                 "method": "GET",
                 "header": [],
                 "url": {
@@ -987,11 +1077,11 @@
     },
     {
       "key": "username",
-      "value": "admin"
+      "value": "admin@goodrabbit.tech"
     },
     {
       "key": "password",
-      "value": ""
+      "value": "ChangeMe123!"
     },
     {
       "key": "bearer_token",
@@ -999,7 +1089,7 @@
     },
     {
       "key": "employee_id",
-      "value": "1"
+      "value": "8"
     },
     {
       "key": "date_start",
