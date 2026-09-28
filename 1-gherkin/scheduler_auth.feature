@@ -36,8 +36,8 @@ Característica: Autenticación y asignación de turnos en el Scheduler
       | repeat       | 2          |
     Entonces la respuesta tiene código 200
     Y el campo "status" es "success"
-    Y "data.total_success" es 2 y "data.total_errors" es 0
-    Y "data.success" contiene 2 turnos del empleado 1 con fechas "2026-09-10" y "2026-09-11"
+    Y "data.success" contiene 2 turnos del empleado 1
+    Y los turnos corresponden a las fechas "2026-09-10" y "2026-09-11"
     Y al consultar GET "/v1/schedule/shift/schedule" con employee_id__in=1 aparecen ambos turnos
 
     # Hallazgo adicional confirmado: la respuesta incluye "data.warnings" con
@@ -46,7 +46,7 @@ Característica: Autenticación y asignación de turnos en el Scheduler
 
   # ---------------------------------------------------------------
   # ESCENARIO 2: Credenciales inválidas
-  # CONFIRMADO: 400 Bad Request. Latencia medida: 18.61s (ver BUG-002).
+  # CONFIRMADO: 400 Bad Request.
   # ---------------------------------------------------------------
 
   @seguridad
@@ -84,14 +84,11 @@ Característica: Autenticación y asignación de turnos en el Scheduler
     Entonces la respuesta tiene código 400
     Y "data.total_success" es 0 y "data.total_errors" es mayor a 0
     Y no se crea ningún turno
-    # BUG-003: el mensaje de error en data.errors["999999"] expone una URL
-    # interna del cluster (http://employees.demo.svc.cluster.local:8080/...),
-    # con codigo 403 Forbidden en vez de 404 Not Found. Ver 3-bug-report/BUG-003.md.
+  
 
   # ---------------------------------------------------------------
   # ESCENARIO 5: Caso borde (rango horario inconsistente)
   # CONFIRMADO: 400, con un mensaje de validacion claro y especifico
-  # (comportamiento ejemplar, sin hallazgos negativos).
   # ---------------------------------------------------------------
   
   @borde

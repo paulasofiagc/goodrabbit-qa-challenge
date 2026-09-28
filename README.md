@@ -14,7 +14,7 @@ Este repositorio contiene el desarrollo del challenge técnico QA de GoodRabbit 
 **Flujo principal elegido:** Autenticación + Asignación de turnos en el Scheduler.
 Se eligió porque cubre en una sola historia el login, los permisos, la validación de datos y la consulta posterior del resultado, y coincide con los endpoints que el reto pide auditar en Postman (`/v1/login`, `/v1/schedule/shift/assign`, `/v1/schedule/shift/schedule`).
 
-> **Nota sobre el ambiente:** la URL entregada inicialmente (`tk-gr.demo.goodrabbit.tech`) no resolvía. Tras reportarlo, se recibió una versión corregida del challenge con la URL correcta (`demo.timekeeper.goodrabbit.tech`). Con el acceso restablecido, se ejecutó la colección completa contra el ambiente real (31+ aserciones automatizadas) y una prueba de carga con k6, identificando y documentando **5 defectos reales** (ver `3-bug-report/`), el más crítico descubierto gracias al bonus de performance.
+> **Nota sobre el ambiente:** la URL entregada inicialmente (`tk-gr.demo.goodrabbit.tech`) no resolvía. Tras reportarlo, se recibió una versión corregida del challenge con la URL correcta (`demo.timekeeper.goodrabbit.tech`). Con el acceso restablecido, se ejecutó la colección completa contra el ambiente real (47+ aserciones automatizadas) y una prueba de carga con k6, identificando y documentando **5 defectos reales** (ver `3-bug-report/`), el hallazgo de mayor severidad fue descubierto durante el bonus de pruebas de carga.
 
 ---
 
@@ -54,7 +54,7 @@ goodrabbit-qa-challenge/
 | # | Entregable | Peso | Estado |
 |---|---|---|---|
 | 3.a | Casos de prueba en Gherkin (5 escenarios) | 25% | **Completado**, validado sintácticamente y confirmado contra el ambiente real |
-| 3.b | Pruebas de API y aserciones en Postman | 25% | **Completado** — 31+ aserciones ejecutadas, incluyendo validaciones que permitieron detectar incumplimientos de tiempo de respuesta documentados en BUG-002. |
+| 3.b | Pruebas de API y aserciones en Postman | 25% | **Completado** — 47+ aserciones ejecutadas, incluyendo validaciones que permitieron detectar incumplimientos de tiempo de respuesta documentados en BUG-002. |
 | 3.c | Reporte de incidencias | 20% | **Completado** — 5 bugs reales, reproducibles y documentados |
 | 4 | Bonus: pruebas de carga (k6) | 20% | **Completado** — script en `4-bonus/load-test.js`, halló BUG-004 |
 | 5 | Orden y documentación | 10% | Este documento |
@@ -80,7 +80,7 @@ npm install
 npx cucumber-js --dry-run 1-gherkin/scheduler_auth.feature
 ```
 
-Resultado obtenido: `5 scenarios (5 undefined), 34 steps (34 undefined)`. Sin errores de parseo.
+Resultado obtenido: `5 scenarios (5 undefined), 34 steps (34 undefined)`. El dry-run confirma que los 5 escenarios y 34 steps son parseados correctamente; `undefined` corresponde a que no existen step definitions implementadas, lo cual es esperado porque el entregable solicitado es la especificación Gherkin, no una suite automatizada ejecutable.
 
 ### 3.b Pruebas de API (Postman)
 
@@ -113,7 +113,7 @@ Validación cruzada adicional: los empleados y turnos creados vía API se verifi
 
 | Bug | Severidad | Tipo | Resumen |
 |---|---|---|---|
-| [`BUG-001.md`](3-bug-report/BUG-001.md) | Alta | Funcional | `employee/create` requiere `phone_number`, `address` y `pay_period_end`, pero la validación 422 no los declara como obligatorios; sin ellos, falla con un `409` engañoso en vez de un error claro |
+| [`BUG-001.md`](3-bug-report/BUG-001.md) | Alta | Funcional | `employee/create` requiere `pay_period_end`, pero la validación 422 no lo declara como obligatorio; sin el, falla con un `409` engañoso en vez de un error claro |
 | [`BUG-002.md`](3-bug-report/BUG-002.md) | Media-Alta | Performance | Latencia de 10 a 18 segundos en operaciones de escritura (`login`, `replace_punches`), tanto en éxito como en fallo |
 | [`BUG-003.md`](3-bug-report/BUG-003.md) | Media | Seguridad | El error de "empleado inexistente" expone la URL interna del microservicio de Empleados en el clúster (`*.svc.cluster.local`) |
 | [`BUG-004.md`](3-bug-report/BUG-004.md) | **Crítica** | Disponibilidad | El backend de autenticación colapsa (503/504) con solo 5 usuarios concurrentes; hallado con el bonus de k6 |
@@ -198,7 +198,7 @@ Ver sección 4 (Bonus) arriba.
 Confirmados contra el ambiente real:
 
 1. **`client_id` desactualizado en la colección original:** el valor `979e03c4...` no es válido en `demo.timekeeper.goodrabbit.tech`; el correcto es `67d6c2dd...`. Corregido en la colección de `2-postman/`.
-2. **Esquema de `employee/create` desactualizado en la colección original:** usa `document_number` (el campo real es `document_employee`) y le faltan 6 campos obligatorios de facto (`pay_rule_id`, `birth_date`, `timezone`, `phone_number`, `address`, `pay_period_end`), de los cuales solo 3 se reportan en el 422 (ver BUG-001).
+2. ****Esquema de `employee/create` desactualizado en la colección original:** usa document_number (el campo real es document_employee) y no incluye varios campos utilizados por el flujo real del Dashboard, entre ellos `pay_rule_id`, `birth_date`, `timezone` y `pay_period_end`. De estos, `pay_rule_id`, `birth_date` y `timezone` informados explícitamente por la validación 422, mientras que `pay_period_en` resulta necesario para completar correctamente la creación, pero no es declarado como requerido por el endpoint (ver BUG-001).
 3. **Estructura de respuesta de `assign` distinta a la documentada:** el ejemplo de la colección muestra `data.success` / `data.errors` como arreglos; la respuesta real usa `data.total_success`, `data.total_errors`, `data.errors` como objeto, y agrega un campo `data.warnings` no documentado.
 4. **`shift.employee_id: 0` es ignorado sin advertencia:** el body de `assign` incluye tanto `shift.employee_id` como `employee_ids`; el primero se ignora silenciosamente y prevalece el segundo.
 5. **Warning `NO_RULESET_ASSIGNED`:** al asignar un turno, el sistema advierte que el empleado no tiene una regla de horas extra/descansos asignada, pero crea el turno igual. Queda como pregunta para el equipo de producto.
